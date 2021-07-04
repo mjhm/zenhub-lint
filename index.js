@@ -16,7 +16,7 @@ try {
     console.log('statusCode:', res.statusCode);
     console.log('headers:', res.headers);
     res.on('data', (d) => {
-      console.log('data', data)
+      console.log('data', d)
     });
   })
   console.log('3 sent get request')
