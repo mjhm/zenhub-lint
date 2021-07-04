@@ -18,7 +18,7 @@ try {
       console.log('data', data)
     });
   })
-  console.log('sent get request')
+  console.log('2 sent get request')
   
 } catch (error) {
   core.setFailed(error.message);
