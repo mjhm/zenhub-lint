@@ -18,6 +18,7 @@ try {
       console.log('data', data)
     });
   })
+  console.log('sent get request')
   
 } catch (error) {
   core.setFailed(error.message);
