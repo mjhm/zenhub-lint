@@ -1,6 +1,7 @@
 const core = require('@actions/core');
 const github = require('@actions/github');
 const https = require('https');
+const { getSwimlanes } = require('./zenhub.js')
 
 try {
   // `who-to-greet` input defined in action metadata file
@@ -20,6 +21,9 @@ try {
     });
   })
   console.log('3 sent get request')
+  getSwimlanes().then(swimLanes => {
+    console.log('swimLanes', swimLanes)
+  })
   
 } catch (error) {
   core.setFailed(error.message);
