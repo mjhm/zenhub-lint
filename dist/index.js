@@ -65,22 +65,94 @@ module.exports = JSON.parse('[["0","\\u0000",128],["a1","｡",62],["8140","　�
 
 /***/ }),
 
-/***/ 5736:
+/***/ 5169:
 /***/ (function(__unused_webpack_module, __webpack_exports__, __nccwpck_require__) {
 
 "use strict";
+// ESM COMPAT FLAG
 __nccwpck_require__.r(__webpack_exports__);
-/* harmony export */ __nccwpck_require__.d(__webpack_exports__, {
-/* harmony export */   "zenhubLint": function() { return /* binding */ zenhubLint; }
-/* harmony export */ });
-/* harmony import */ var _lib_zenhub_js__WEBPACK_IMPORTED_MODULE_0__ = __nccwpck_require__(4371);
-/* harmony import */ var _lib_zenhub_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__nccwpck_require__.n(_lib_zenhub_js__WEBPACK_IMPORTED_MODULE_0__);
+
+// EXPORTS
+__nccwpck_require__.d(__webpack_exports__, {
+  "zenhubLint": function() { return /* binding */ zenhubLint; }
+});
+
+// EXTERNAL MODULE: external "https"
+var external_https_ = __nccwpck_require__(7211);
+var external_https_default = /*#__PURE__*/__nccwpck_require__.n(external_https_);
+;// CONCATENATED MODULE: ./lib/zenhub.js
+
+
+
+const authHeader = {
+  headers: {
+    'X-Authentication-Token': process.env.ZENHUB_TOKEN
+  }
+}
+
+const repoPath = `repositories/${process.env.REPO_ID}`
+
+
+
+const getSwimlanes = async () => {
+  return new Promise((resolve, reject) => {
+    external_https_default().get(`https://api.zenhub.com/p1/${repoPath}/board`,
+      authHeader,
+      res => {
+        if (res.statusCode !== 200) {
+          return reject(new Error(`Request Failed: ${statusCode}`));
+        }
+        res.setEncoding('utf8');
+        let rawData = '';
+        res.on('data', (chunk) => { rawData += chunk; });
+        res.on('end', () => {
+          try {
+            const parsedData = JSON.parse(rawData);
+            console.log(parsedData);
+            resolve(parsedData.pipelines)
+          } catch (e) {
+            reject(e)
+          }
+        });
+      }
+    )
+    }
+  )
+}
+
+
+const getAllDependencies = async () => {
+  return new Promise((resolve, reject) => {
+    external_https_default().get(`https://api.zenhub.com/p1/${repoPath}/dependencies`,
+      authHeader,
+      res => {
+        if (res.statusCode !== 200) {
+          return reject(new Error(`Request Failed: ${statusCode}`));
+        }
+        res.setEncoding('utf8');
+        let rawData = '';
+        res.on('data', (chunk) => { rawData += chunk; });
+        res.on('end', () => {
+          try {
+            const parsedData = JSON.parse(rawData);
+            console.log(parsedData);
+            resolve(parsedData)
+          } catch (e) {
+            reject(e)
+          }
+        });
+      }
+    )
+    }
+  )
+}
+;// CONCATENATED MODULE: ./lib/zenhub-lint.js
 
 
 
 const zenhubLint = async () => {
-  const swimlanes = await (0,_lib_zenhub_js__WEBPACK_IMPORTED_MODULE_0__.getSwimlanes)()
-  const dependencies = await  (0,_lib_zenhub_js__WEBPACK_IMPORTED_MODULE_0__.getAllDependencies)()
+  const swimlanes = await getSwimlanes()
+  const dependencies = await  getAllDependencies()
   console.log('swimlanes', swimlanes)
   console.log('dependencies', dependencies)
   return "Zenhub Lint Report"
@@ -9193,14 +9265,6 @@ module.exports = safer
 
 /***/ }),
 
-/***/ 4371:
-/***/ (function(module) {
-
-module.exports = eval("require")("./lib/zenhub.js");
-
-
-/***/ }),
-
 /***/ 4175:
 /***/ (function(module) {
 
@@ -9411,7 +9475,7 @@ var __webpack_exports__ = {};
 const core = __nccwpck_require__(6024);
 const github = __nccwpck_require__(5016);
 const https = __nccwpck_require__(7211);
-const { zenhubLint } = __nccwpck_require__(5736)
+const { zenhubLint } = __nccwpck_require__(5169)
 
 try {
   // `who-to-greet` input defined in action metadata file
