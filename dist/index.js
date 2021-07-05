@@ -162,6 +162,7 @@ const getIssues = async () => {
 
 const getIssueType = issue => {
   const types = []
+  console.log('h4')
   (issue.labels || []).forEach(label => {
     if (['discussion', 'bug', 'task', 'story'].includes(label.name)) {
       types.push(label.name)
@@ -186,6 +187,7 @@ const zenhubLint = async () => {
   const dependencies = await getAllDependencies()
   const keyBlockedByValue = {}
   const keyBlockingValue = {}
+  console.log('h1')
   dependencies.forEach(([blocking, blocked])  => {
     if (! keyBlockedByValue[blocked]) {
       keyBlockedByValue[blocked] = []
@@ -200,8 +202,10 @@ const zenhubLint = async () => {
 
   const report = [ "Zenhub Lint Report\n" ]
 
+  console.log('h2')
   [ "Acceptance", "Code Review", "In Progress", "To Do", "Backlog", "New Issues" ].forEach(laneName => {
     const { issues } = swimlanes[laneName]
+    console.log('h3')
     issues.forEach((issue) => {
       const { issue_number, is_epic } = issue
       if (is_epic) return
