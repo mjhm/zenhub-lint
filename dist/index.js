@@ -133,8 +133,8 @@ const getAllDependencies = async () => {
         res.on('data', (chunk) => { rawData += chunk; });
         res.on('end', () => {
           try {
-            const parsedData = JSON.parse(rawData);
-            resolve(parsedData)
+            const dependencies = JSON.parse(rawData).dependencies.map(d => [ d.blocking.issue_number, d.blocked.issue_number]);
+            resolve(dependencies)
           } catch (e) {
             reject(e)
           }
