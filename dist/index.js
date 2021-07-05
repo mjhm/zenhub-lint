@@ -65,7 +65,7 @@ module.exports = JSON.parse('[["0","\\u0000",128],["a1","｡",62],["8140","　�
 
 /***/ }),
 
-/***/ 5169:
+/***/ 2194:
 /***/ (function(__unused_webpack_module, __webpack_exports__, __nccwpck_require__) {
 
 "use strict";
@@ -108,7 +108,6 @@ const getSwimlanes = async () => {
         res.on('end', () => {
           try {
             const parsedData = JSON.parse(rawData);
-            console.log(parsedData);
             resolve(parsedData.pipelines)
           } catch (e) {
             reject(e)
@@ -135,7 +134,6 @@ const getAllDependencies = async () => {
         res.on('end', () => {
           try {
             const parsedData = JSON.parse(rawData);
-            console.log(parsedData);
             resolve(parsedData)
           } catch (e) {
             reject(e)
@@ -146,16 +144,33 @@ const getAllDependencies = async () => {
     }
   )
 }
+;// CONCATENATED MODULE: ./lib/github.js
+
+const github = __nccwpck_require__(5016);
+
+const getIssues = async () => {
+  const octokit = github.getOctokit(process.env.GITHUB_TOKEN)
+  const q = 'q=' + encodeURIComponent('is:issue is:open')
+  return octokit.rest.search.issuesAndPullRequests({ q });
+}
 ;// CONCATENATED MODULE: ./lib/zenhub-lint.js
+
+const core = __nccwpck_require__(6024);
+const zenhub_lint_github = __nccwpck_require__(5016);
+const https = __nccwpck_require__(7211);
+
 
 
 
 const zenhubLint = async () => {
   const swimlanes = await getSwimlanes()
   const dependencies = await  getAllDependencies()
+  const issues = await getIssues()
+
   console.log('ALL ' + JSON.stringify({
     swimlanes,
-    dependencies
+    dependencies,
+    issues
   }, null, 2))
   return "Zenhub Lint Report"
 }
@@ -9475,26 +9490,24 @@ var __webpack_exports__ = {};
 // This entry need to be wrapped in an IIFE because it need to be isolated against other modules in the chunk.
 !function() {
 const core = __nccwpck_require__(6024);
-const github = __nccwpck_require__(5016);
-const https = __nccwpck_require__(7211);
-const { zenhubLint } = __nccwpck_require__(5169)
+const { zenhubLint } = __nccwpck_require__(2194)
 
 try {
-  // `who-to-greet` input defined in action metadata file
-  const nameToGreet = core.getInput('who-to-greet');
-  console.log(`Hello ${nameToGreet}!`);
-  const time = (new Date()).toTimeString();
-  core.setOutput("time", time);
-  // Get the JSON webhook payload for the event that triggered the workflow
-  const payload = JSON.stringify(github.context.payload, undefined, 2)
-  console.log(`3. The event payload: ${payload}`);
-  console.log('3 sending get request')
+  // // `who-to-greet` input defined in action metadata file
+  // const nameToGreet = core.getInput('who-to-greet');
+  // console.log(`Hello ${nameToGreet}!`);
+  // const time = (new Date()).toTimeString();
+  // core.setOutput("time", time);
+  // // Get the JSON webhook payload for the event that triggered the workflow
+  // const payload = JSON.stringify(github.context.payload, undefined, 2)
+  // console.log(`3. The event payload: ${payload}`);
+  // console.log('3 sending get request')
   zenhubLint()
   .then(report => {
     console.log('report', report)
+  }).catch(error => {
+    core.setFailed(error.message);
   })
-
-  
 } catch (error) {
   core.setFailed(error.message);
 }
