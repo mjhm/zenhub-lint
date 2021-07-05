@@ -1,7 +1,7 @@
 const core = require('@actions/core');
 const github = require('@actions/github');
 const https = require('https');
-const { getSwimlanes } = require('./zenhub.js')
+const { zenhubLint } = require('./zenhub-lint.js')
 
 try {
   // `who-to-greet` input defined in action metadata file
@@ -13,17 +13,11 @@ try {
   const payload = JSON.stringify(github.context.payload, undefined, 2)
   console.log(`3. The event payload: ${payload}`);
   console.log('3 sending get request')
-  https.get("https://example.com", (res) => {
-    console.log('statusCode:', res.statusCode);
-    console.log('headers:', res.headers);
-    res.on('data', (d) => {
-      console.log('data', d)
-    });
+  zenhubLint()
+  .then(report => {
+    console.log('report', report)
   })
-  console.log('3 sent get request')
-  getSwimlanes().then(swimLanes => {
-    console.log('swimLanes', swimLanes)
-  })
+
   
 } catch (error) {
   core.setFailed(error.message);

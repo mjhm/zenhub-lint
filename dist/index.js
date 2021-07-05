@@ -6198,75 +6198,6 @@ function wrappy (fn, cb) {
 
 /***/ }),
 
-/***/ 7146:
-/***/ (function(__unused_webpack_module, __webpack_exports__, __nccwpck_require__) {
-
-"use strict";
-__nccwpck_require__.r(__webpack_exports__);
-/* harmony export */ __nccwpck_require__.d(__webpack_exports__, {
-/* harmony export */   "getSwimlanes": function() { return /* binding */ getSwimlanes; }
-/* harmony export */ });
-/* harmony import */ var https__WEBPACK_IMPORTED_MODULE_0__ = __nccwpck_require__(7211);
-/* harmony import */ var https__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__nccwpck_require__.n(https__WEBPACK_IMPORTED_MODULE_0__);
-
-
-
-const authHeader = {
-  headers: {
-    'X-Authentication-Token': process.env.ZENHUB_TOKEN
-  }
-}
-
-const repoPath = `repositories/${process.env.REPO_ID}`
-
-let allSwimlanes = null
-
-const getSwimlanes = async () => {
-  return new Promise((resolve, reject) => {
-    if (allSwimlanes) return resolve(allSwimlanes)
-
-    https__WEBPACK_IMPORTED_MODULE_0___default().get(`https://api.zenhub.com/p1/${repoPath}/board`,
-      authHeader,
-      res => {
-        if (res.statusCode !== 200) {
-          return reject(new Error(`Request Failed: ${statusCode}`));
-        }
-
-        res.setEncoding('utf8');
-        let rawData = '';
-        res.on('data', (chunk) => { rawData += chunk; });
-        res.on('end', () => {
-          try {
-            const parsedData = JSON.parse(rawData);
-            console.log(parsedData);
-            resolve(parsedData)
-
-          // allSwimlanes = _.fromPairs(
-          //   (result.data.pipelines || []).map(pipeline =>
-          //     [pipeline.name, pipeline.id]
-          //   )
-          // )
-          } catch (e) {
-            reject(e)
-          }
-        });
-      }
-    )
-    })
-  // const result = await axios.get(
-  //   `https://api.zenhub.com/p1/${repoPath}/board`,
-  //   authHeader
-  // )
-  // allSwimlanes = _.fromPairs(
-  //   (result.data.pipelines || []).map(pipeline =>
-  //     [pipeline.name, pipeline.id]
-  //   )
-  // )
-  // return allSwimlanes
-}
-
-/***/ }),
-
 /***/ 2954:
 /***/ (function(module, __unused_webpack_exports, __nccwpck_require__) {
 
@@ -9239,6 +9170,14 @@ module.exports = safer
 
 /***/ }),
 
+/***/ 7344:
+/***/ (function(module) {
+
+module.exports = eval("require")("./zenhub-lint.js");
+
+
+/***/ }),
+
 /***/ 4175:
 /***/ (function(module) {
 
@@ -9400,46 +9339,6 @@ module.exports = require("zlib");;
 /******/ 	}
 /******/ 	
 /************************************************************************/
-/******/ 	/* webpack/runtime/compat get default export */
-/******/ 	!function() {
-/******/ 		// getDefaultExport function for compatibility with non-harmony modules
-/******/ 		__nccwpck_require__.n = function(module) {
-/******/ 			var getter = module && module.__esModule ?
-/******/ 				function() { return module['default']; } :
-/******/ 				function() { return module; };
-/******/ 			__nccwpck_require__.d(getter, { a: getter });
-/******/ 			return getter;
-/******/ 		};
-/******/ 	}();
-/******/ 	
-/******/ 	/* webpack/runtime/define property getters */
-/******/ 	!function() {
-/******/ 		// define getter functions for harmony exports
-/******/ 		__nccwpck_require__.d = function(exports, definition) {
-/******/ 			for(var key in definition) {
-/******/ 				if(__nccwpck_require__.o(definition, key) && !__nccwpck_require__.o(exports, key)) {
-/******/ 					Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
-/******/ 				}
-/******/ 			}
-/******/ 		};
-/******/ 	}();
-/******/ 	
-/******/ 	/* webpack/runtime/hasOwnProperty shorthand */
-/******/ 	!function() {
-/******/ 		__nccwpck_require__.o = function(obj, prop) { return Object.prototype.hasOwnProperty.call(obj, prop); }
-/******/ 	}();
-/******/ 	
-/******/ 	/* webpack/runtime/make namespace object */
-/******/ 	!function() {
-/******/ 		// define __esModule on exports
-/******/ 		__nccwpck_require__.r = function(exports) {
-/******/ 			if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
-/******/ 				Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
-/******/ 			}
-/******/ 			Object.defineProperty(exports, '__esModule', { value: true });
-/******/ 		};
-/******/ 	}();
-/******/ 	
 /******/ 	/* webpack/runtime/compat */
 /******/ 	
 /******/ 	if (typeof __nccwpck_require__ !== 'undefined') __nccwpck_require__.ab = __dirname + "/";/************************************************************************/
@@ -9449,7 +9348,7 @@ var __webpack_exports__ = {};
 const core = __nccwpck_require__(6024);
 const github = __nccwpck_require__(5016);
 const https = __nccwpck_require__(7211);
-const { getSwimlanes } = __nccwpck_require__(7146)
+const { zenhubLint } = __nccwpck_require__(7344)
 
 try {
   // `who-to-greet` input defined in action metadata file
@@ -9461,17 +9360,11 @@ try {
   const payload = JSON.stringify(github.context.payload, undefined, 2)
   console.log(`3. The event payload: ${payload}`);
   console.log('3 sending get request')
-  https.get("https://example.com", (res) => {
-    console.log('statusCode:', res.statusCode);
-    console.log('headers:', res.headers);
-    res.on('data', (d) => {
-      console.log('data', d)
-    });
+  zenhubLint()
+  .then(report => {
+    console.log('report', report)
   })
-  console.log('3 sent get request')
-  getSwimlanes().then(swimLanes => {
-    console.log('swimLanes', swimLanes)
-  })
+
   
 } catch (error) {
   core.setFailed(error.message);
