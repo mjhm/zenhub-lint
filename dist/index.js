@@ -153,7 +153,7 @@ const getAllDependencies = async () => {
 const zenhubLint = async () => {
   const swimlanes = await getSwimlanes()
   const dependencies = await  getAllDependencies()
-  console.log(JSON.stringify({
+  console.log('ALL ' + JSON.stringify({
     swimlanes,
     dependencies
   }, null, 2))
