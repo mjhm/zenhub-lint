@@ -206,7 +206,7 @@ const zenhubLint = async () => {
 
   const report = [ "Zenhub Lint Report\n" ]
 
-  console.log('h2')
+  console.log('h2b')
   [ "Acceptance", "Code Review", "In Progress", "To Do", "Backlog", "New Issues" ].forEach(laneName => {
     console.log('lanename', laneName)
     console.log(`swimlanes[${laneName}]`, swimlanes[laneName])
