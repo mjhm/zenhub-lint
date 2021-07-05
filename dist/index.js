@@ -152,7 +152,7 @@ const github = __nccwpck_require__(5016);
 
 const getIssues = async () => {
   const octokit = github.getOctokit(process.env.GITHUB_TOKEN)
-  const q = 'repo:mjhm/zenhub-lint+is:issue+is:open'
+  const q = 'repo:Originate/perfected+is:issue+is:open'
   return octokit.rest.search.issuesAndPullRequests({ q });
 }
 ;// CONCATENATED MODULE: ./lib/zenhub-lint.js
