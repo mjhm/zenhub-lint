@@ -1,7 +1,7 @@
 const core = require('@actions/core');
 const github = require('@actions/github');
 const https = require('https');
-const { zenhubLint } = require('./zenhub-lint.js')
+const { zenhubLint } = require('./lib/zenhub-lint.js')
 
 try {
   // `who-to-greet` input defined in action metadata file
