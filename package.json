@@ -9,15 +9,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/mjhm/hello-world-javascript-action.git"
+    "url": "git+https://github.com/mjhm/zenhub-lint.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/mjhm/hello-world-javascript-action/issues"
+    "url": "https://github.com/mjhm/zenhub-lint/issues"
   },
-  "homepage": "https://github.com/mjhm/hello-world-javascript-action#readme",
+  "homepage": "https://github.com/mjhm/zenhub-lint#readme",
   "dependencies": {
     "@actions/core": "^1.4.0",
     "@actions/github": "^5.0.0"

@@ -188,6 +188,13 @@ const zenhubLint = async () => {
   const swimlanes = (0,lodash.keyBy)(swimlanesArray, 'name')
   console.log('swimlanes', swimlanes)
   const issues = (0,lodash.keyBy)((await getIssues()).data.items, "number")
+
+  console.log('ALL ' + JSON.stringify({
+    issues,
+    swimlanes,
+    dependencies
+  }, null, 2))
+  
   const dependencies = await getAllDependencies()
   const keyBlockedByValue = {}
   const keyBlockingValue = {}
@@ -229,11 +236,6 @@ const zenhubLint = async () => {
     })
   })
 
-  console.log('ALL ' + JSON.stringify({
-    issues,
-    swimlanes,
-    dependencies
-  }, null, 2))
   return report
 }
 
