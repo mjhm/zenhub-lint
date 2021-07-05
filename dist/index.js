@@ -156,8 +156,20 @@ const github_github = __nccwpck_require__(5016);
 
 const getIssues = async () => {
   const octokit = github_github.getOctokit(process.env.GITHUB_TOKEN)
+  let totalCount = Number.MAX_SAFE_INTEGER
+  const issues = []
+  let page = 0
   const q = 'repo:Originate/perfected+is:issue+is:open'
-  return octokit.rest.search.issuesAndPullRequests({ q });
+  while (issues.length < totalCount) {
+    const result = await octokit.rest.search.issuesAndPullRequests({ q, per_page: 100, page });
+    issues = [...issues, ...result.data.items]
+    totalCount = result.total_count || 0
+    page += 1
+    if (page > 100 || (((result || {}).data || {}).items || []).length === 0) {
+      throw new Error('Bad issue search')
+    }
+  }
+  return issues
 }
 
 const getIssueType = issue => {
@@ -189,7 +201,7 @@ const zenhubLint = async () => {
   console.log('swimlanes', swimlanes)
   const issuesResult = await getIssues()
   console.log('issuesResult', issuesResult)
-  const issues = (0,lodash.keyBy)(issuesResult.data.items, "number")
+  const issues = (0,lodash.keyBy)(issuesResult, "number")
 
   const dependencies = await getAllDependencies()
   const keyBlockedByValue = {}
