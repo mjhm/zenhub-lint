@@ -65,6 +65,29 @@ module.exports = JSON.parse('[["0","\\u0000",128],["a1","｡",62],["8140","　�
 
 /***/ }),
 
+/***/ 5736:
+/***/ (function(__unused_webpack_module, __webpack_exports__, __nccwpck_require__) {
+
+"use strict";
+__nccwpck_require__.r(__webpack_exports__);
+/* harmony export */ __nccwpck_require__.d(__webpack_exports__, {
+/* harmony export */   "zenhubLint": function() { return /* binding */ zenhubLint; }
+/* harmony export */ });
+/* harmony import */ var _lib_zenhub_js__WEBPACK_IMPORTED_MODULE_0__ = __nccwpck_require__(4371);
+/* harmony import */ var _lib_zenhub_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__nccwpck_require__.n(_lib_zenhub_js__WEBPACK_IMPORTED_MODULE_0__);
+
+
+
+const zenhubLint = async () => {
+  const swimlanes = await (0,_lib_zenhub_js__WEBPACK_IMPORTED_MODULE_0__.getSwimlanes)()
+  const dependencies = await  (0,_lib_zenhub_js__WEBPACK_IMPORTED_MODULE_0__.getAllDependencies)()
+  console.log('swimlanes', swimlanes)
+  console.log('dependencies', dependencies)
+  return "Zenhub Lint Report"
+}
+
+/***/ }),
+
 /***/ 5350:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
@@ -9170,10 +9193,10 @@ module.exports = safer
 
 /***/ }),
 
-/***/ 7344:
+/***/ 4371:
 /***/ (function(module) {
 
-module.exports = eval("require")("./zenhub-lint.js");
+module.exports = eval("require")("./lib/zenhub.js");
 
 
 /***/ }),
@@ -9339,6 +9362,46 @@ module.exports = require("zlib");;
 /******/ 	}
 /******/ 	
 /************************************************************************/
+/******/ 	/* webpack/runtime/compat get default export */
+/******/ 	!function() {
+/******/ 		// getDefaultExport function for compatibility with non-harmony modules
+/******/ 		__nccwpck_require__.n = function(module) {
+/******/ 			var getter = module && module.__esModule ?
+/******/ 				function() { return module['default']; } :
+/******/ 				function() { return module; };
+/******/ 			__nccwpck_require__.d(getter, { a: getter });
+/******/ 			return getter;
+/******/ 		};
+/******/ 	}();
+/******/ 	
+/******/ 	/* webpack/runtime/define property getters */
+/******/ 	!function() {
+/******/ 		// define getter functions for harmony exports
+/******/ 		__nccwpck_require__.d = function(exports, definition) {
+/******/ 			for(var key in definition) {
+/******/ 				if(__nccwpck_require__.o(definition, key) && !__nccwpck_require__.o(exports, key)) {
+/******/ 					Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
+/******/ 				}
+/******/ 			}
+/******/ 		};
+/******/ 	}();
+/******/ 	
+/******/ 	/* webpack/runtime/hasOwnProperty shorthand */
+/******/ 	!function() {
+/******/ 		__nccwpck_require__.o = function(obj, prop) { return Object.prototype.hasOwnProperty.call(obj, prop); }
+/******/ 	}();
+/******/ 	
+/******/ 	/* webpack/runtime/make namespace object */
+/******/ 	!function() {
+/******/ 		// define __esModule on exports
+/******/ 		__nccwpck_require__.r = function(exports) {
+/******/ 			if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
+/******/ 				Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 			}
+/******/ 			Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 		};
+/******/ 	}();
+/******/ 	
 /******/ 	/* webpack/runtime/compat */
 /******/ 	
 /******/ 	if (typeof __nccwpck_require__ !== 'undefined') __nccwpck_require__.ab = __dirname + "/";/************************************************************************/
@@ -9348,7 +9411,7 @@ var __webpack_exports__ = {};
 const core = __nccwpck_require__(6024);
 const github = __nccwpck_require__(5016);
 const https = __nccwpck_require__(7211);
-const { zenhubLint } = __nccwpck_require__(7344)
+const { zenhubLint } = __nccwpck_require__(5736)
 
 try {
   // `who-to-greet` input defined in action metadata file
