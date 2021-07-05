@@ -182,7 +182,10 @@ var lodash = __nccwpck_require__(487);
 
 
 const zenhubLint = async () => {
-  const swimlanes = (0,lodash.keyBy)(await getSwimlanes(), "name")
+
+  const swimlanesArray = await getSwimlanes()
+  console.log('swimlanesArray', swimlanesArray)
+  const swimlanes = (0,lodash.keyBy)(swimlanesArray, "name")
   const issues = (0,lodash.keyBy)((await getIssues()).data.items, "number")
   const dependencies = await getAllDependencies()
   const keyBlockedByValue = {}
