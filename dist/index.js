@@ -187,7 +187,9 @@ const zenhubLint = async () => {
   console.log('swimlanesArray', swimlanesArray)
   const swimlanes = (0,lodash.keyBy)(swimlanesArray, 'name')
   console.log('swimlanes', swimlanes)
-  const issues = (0,lodash.keyBy)((await getIssues()).data.items, "number")
+  const issuesResult = await getIssues()
+  console.log('issuesResult', issuesResult)
+  const issues = (0,lodash.keyBy)(issuesResult.data.items, "number")
 
   const dependencies = await getAllDependencies()
   const keyBlockedByValue = {}
