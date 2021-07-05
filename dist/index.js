@@ -133,7 +133,9 @@ const getAllDependencies = async () => {
         res.on('data', (chunk) => { rawData += chunk; });
         res.on('end', () => {
           try {
-            const dependencies = JSON.parse(rawData).dependencies.map(d => [ d.blocking.issue_number, d.blocked.issue_number]);
+            const dependencies = JSON.parse(rawData).dependencies.map(
+              d => [ d.blocking.issue_number, d.blocked.issue_number]
+            );
             resolve(dependencies)
           } catch (e) {
             reject(e)
@@ -150,7 +152,7 @@ const github = __nccwpck_require__(5016);
 
 const getIssues = async () => {
   const octokit = github.getOctokit(process.env.GITHUB_TOKEN)
-  const q = 'q=' + encodeURIComponent('repo:Originate/perfected is:issue is:open')
+  const q = 'q=' + encodeURIComponent('repo:mjhm/zenhub-lint is:issue is:open')
   return octokit.rest.search.issuesAndPullRequests({ q });
 }
 ;// CONCATENATED MODULE: ./lib/zenhub-lint.js
@@ -168,9 +170,9 @@ const zenhubLint = async () => {
   const issues = await getIssues()
 
   console.log('ALL ' + JSON.stringify({
+    issues,
     swimlanes,
-    dependencies,
-    issues
+    dependencies
   }, null, 2))
   return "Zenhub Lint Report"
 }
