@@ -157,7 +157,7 @@ const github_github = __nccwpck_require__(5016);
 const getIssues = async () => {
   const octokit = github_github.getOctokit(process.env.GITHUB_TOKEN)
   let totalCount = Number.MAX_SAFE_INTEGER
-  const issues = []
+  let issues = []
   let page = 0
   const q = 'repo:Originate/perfected+is:issue+is:open'
   while (issues.length < totalCount) {
