@@ -77,10 +77,6 @@ __nccwpck_require__.d(__webpack_exports__, {
   "zenhubLint": function() { return /* binding */ zenhubLint; }
 });
 
-// EXTERNAL MODULE: ./node_modules/@actions/core/lib/core.js
-var core = __nccwpck_require__(6024);
-// EXTERNAL MODULE: ./node_modules/@actions/github/lib/github.js
-var github = __nccwpck_require__(5016);
 // EXTERNAL MODULE: external "https"
 var external_https_ = __nccwpck_require__(7211);
 var external_https_default = /*#__PURE__*/__nccwpck_require__.n(external_https_);
@@ -152,10 +148,10 @@ const getAllDependencies = async () => {
 }
 ;// CONCATENATED MODULE: ./lib/github.js
 
-const github_github = __nccwpck_require__(5016);
+const github = __nccwpck_require__(5016);
 
 const getIssues = async () => {
-  const octokit = github_github.getOctokit(process.env.GITHUB_TOKEN)
+  const octokit = github.getOctokit(process.env.GITHUB_TOKEN)
   let totalCount = Number.MAX_SAFE_INTEGER
   let issues = []
   let page = 0
@@ -185,38 +181,37 @@ const getIssueType = issue => {
 // EXTERNAL MODULE: ./node_modules/lodash/lodash.js
 var lodash = __nccwpck_require__(3380);
 ;// CONCATENATED MODULE: ./lib/zenhub-lint.js
+/* eslint-disable camelcase */
 
-
-
-
+// import core from '@actions/core'
+// import github from '@actions/github'
 
 
 
 
 const zenhubLint = async () => {
-
   const swimlanesArray = await getSwimlanes()
   console.log('swimlanesArray', swimlanesArray)
   const swimlanes = (0,lodash.keyBy)(swimlanesArray, 'name')
   console.log('swimlanes', swimlanes)
   const issuesResult = await getIssues()
   console.log('issuesResult', issuesResult)
-  const issues = (0,lodash.keyBy)(issuesResult, "number")
+  const issues = (0,lodash.keyBy)(issuesResult, 'number')
 
   const dependencies = await getAllDependencies()
   const keyBlockedByValue = {}
   const keyBlockingValue = {}
   console.log('h1')
-  dependencies.forEach(([blocking, blocked])  => {
-    if (! keyBlockedByValue[blocked]) {
+  dependencies.forEach(([blocking, blocked]) => {
+    if (!keyBlockedByValue[blocked]) {
       keyBlockedByValue[blocked] = []
     }
     keyBlockedByValue[blocked].push(blocking)
 
-    if (! keyBlockingValue[blocking]) {
+    if (!keyBlockingValue[blocking]) {
       keyBlockingValue[blocking] = []
     }
-    keyBlockingValue[blocking].push(blocked)   
+    keyBlockingValue[blocking].push(blocked)
   })
 
   console.log('ALL ' + JSON.stringify({
@@ -224,18 +219,17 @@ const zenhubLint = async () => {
     swimlanes,
     dependencies
   }, null, 2))
-  
 
-  const report = [ "Zenhub Lint Report\n" ]
+  const report = ['Zenhub Lint Report\n']
 
   console.log('h2c')
-  const laneNames = [ "Acceptance", "Code Review", "In Progress", "To Do", "Backlog", "New Issues" ]
+  const laneNames = ['Acceptance', 'Code Review', 'In Progress', 'To Do', 'Backlog', 'New Issues']
   laneNames.forEach(laneName => {
     console.log('lanename', laneName)
     console.log(`swimlanes[${laneName}]`, swimlanes[laneName])
-    const { issues } = swimlanes[laneName]
+    const { issues: zenhubIssues } = swimlanes[laneName]
     console.log('h3')
-    issues.forEach((issue) => {
+    zenhubIssues.forEach((issue) => {
       const { issue_number, is_epic } = issue
       const issue_key = String(issue_number)
       if (is_epic) return
@@ -255,6 +249,7 @@ const zenhubLint = async () => {
 
   return report
 }
+
 
 /***/ }),
 
