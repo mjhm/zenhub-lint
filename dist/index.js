@@ -82,7 +82,6 @@ var external_https_ = __nccwpck_require__(7211);
 var external_https_default = /*#__PURE__*/__nccwpck_require__.n(external_https_);
 // EXTERNAL MODULE: ./node_modules/lodash/lodash.js
 var lodash = __nccwpck_require__(3380);
-var lodash_default = /*#__PURE__*/__nccwpck_require__.n(lodash);
 ;// CONCATENATED MODULE: ./lib/zenhub.js
 
 
@@ -113,7 +112,7 @@ const getSwimlanes = async () => {
         res.on('end', () => {
           try {
             const parsedData = JSON.parse(rawData)
-            swimlanes = lodash_default()(parsedData.pipelines, 'name')
+            swimlanes = (0,lodash.keyBy)(parsedData.pipelines, 'name')
             resolve(swimlanes)
           } catch (e) {
             reject(e)
