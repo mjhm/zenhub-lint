@@ -242,8 +242,6 @@ const zenhubLint = async () => {
 
   try {
     laneNames.forEach(laneName => {
-      console.log('lanename', laneName)
-      console.log(`swimlanes[${laneName}]`, swimlanes[laneName])
       const { issues: zenhubIssues } = swimlanes[laneName]
       zenhubIssues.forEach((zhIssue) => {
         const { issue_number, is_epic } = zhIssue
@@ -261,6 +259,7 @@ const zenhubLint = async () => {
         zhIssue.blocking = dependencies.keyBlockingValue[issue_number]
       })
     })
+    checkAll(swimlanes, report)
   } catch (e) {
     console.error(e.message)
   }
