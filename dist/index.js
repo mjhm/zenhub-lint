@@ -257,7 +257,9 @@ const zenhubLint = async () => {
         zhIssue.issueType = issueType
         zhIssue.blockedBy = dependencies.keyBlockedByValue[issue_number]
         zhIssue.blocking = dependencies.keyBlockingValue[issue_number]
+        console.log('zhIssue', zhIssue)
       })
+      console.log('zenhubIssues', zenhubIssues)
     })
     checkAll(swimlanes, report)
   } catch (e) {
