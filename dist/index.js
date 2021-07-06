@@ -121,8 +121,7 @@ const getSwimlanes = async () => {
         })
       }
     )
-  }
-  )
+  })
 }
 
 let dependencies = null
@@ -167,8 +166,7 @@ const getAllDependencies = async () => {
         })
       }
     )
-  }
-  )
+  })
 }
 
 ;// CONCATENATED MODULE: ./lib/github.js
@@ -223,6 +221,8 @@ const laneNames = ['Acceptance', 'Code Review', 'In Progress', 'To Do', 'Backlog
 
 const checkAll = (swimlanes, report) => {
   laneNames.forEach(laneName => {
+    console.log('checkAll laneName', laneName)
+    console.log('checkAll swimlane', swimlanes[laneName])
     const { issues: zenhubIssues } = swimlanes[laneName]
     zenhubIssues.forEach((zhIssue) => {
       const { issueType, blockedBy, issue_number } = zhIssue
@@ -242,6 +242,8 @@ const zenhubLint = async () => {
 
   try {
     laneNames.forEach(laneName => {
+      console.log('zenhubLint laneName', laneName)
+      console.log('zenhubLint swimlane', swimlanes[laneName])
       const { issues: zenhubIssues } = swimlanes[laneName]
       zenhubIssues.forEach((zhIssue) => {
         const { issue_number, is_epic } = zhIssue
@@ -264,6 +266,7 @@ const zenhubLint = async () => {
     checkAll(swimlanes, report)
   } catch (e) {
     console.error(e.message)
+    console.error(e)
   }
 
   console.log(JSON.stringify({
