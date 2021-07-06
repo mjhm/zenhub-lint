@@ -241,6 +241,7 @@ const zenhubLint = async () => {
       if (is_epic) return
       console.log('issue_key', issue_key)
       console.log('issues[issue_key]', issues[issue_key])
+      console.log('all keys', Object.keys(issues))
       const issueType = getIssueType(issues[String(issue_key)])
       if (issueType === null) {
         return report.push(`issue ${issue_key} in ${laneName} doesn't have an issue type.`)
