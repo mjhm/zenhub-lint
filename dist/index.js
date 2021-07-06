@@ -234,7 +234,9 @@ const zenhubLint = async () => {
       console.log('issue_key', issue_key)
       console.log('issues[issue_key]', issues[issue_key])
       console.log('all keys', Object.keys(issues))
-      const issueType = getIssueType(issues[String(issue_key)])
+      const currentIssue = issues[issue_number]
+      if (currentIssue.pull_request) return // skipping PRs for now.
+      const issueType = getIssueType(currentIssue)
       if (issueType === null) {
         return report.push(`issue ${issue_key} in ${laneName} doesn't have an issue type.`)
       }
