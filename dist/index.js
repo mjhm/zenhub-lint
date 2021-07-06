@@ -80,7 +80,11 @@ __nccwpck_require__.d(__webpack_exports__, {
 // EXTERNAL MODULE: external "https"
 var external_https_ = __nccwpck_require__(7211);
 var external_https_default = /*#__PURE__*/__nccwpck_require__.n(external_https_);
+// EXTERNAL MODULE: ./node_modules/lodash/lodash.js
+var lodash = __nccwpck_require__(3380);
+var lodash_default = /*#__PURE__*/__nccwpck_require__.n(lodash);
 ;// CONCATENATED MODULE: ./lib/zenhub.js
+
 
 
 
@@ -92,7 +96,10 @@ const authHeader = {
 
 const repoPath = `repositories/${process.env.REPO_ID}`
 
+let swimlanes = null
+
 const getSwimlanes = async () => {
+  if (swimlanes) return swimlanes
   return new Promise((resolve, reject) => {
     external_https_default().get(`https://api.zenhub.com/p1/${repoPath}/board`,
       authHeader,
@@ -106,7 +113,8 @@ const getSwimlanes = async () => {
         res.on('end', () => {
           try {
             const parsedData = JSON.parse(rawData)
-            resolve(parsedData.pipelines)
+            swimlanes = lodash_default()(parsedData.pipelines, 'name')
+            resolve(swimlanes)
           } catch (e) {
             reject(e)
           }
@@ -117,7 +125,10 @@ const getSwimlanes = async () => {
   )
 }
 
+let dependencies = null
+
 const getAllDependencies = async () => {
+  if (dependencies) return dependencies
   return new Promise((resolve, reject) => {
     external_https_default().get(`https://api.zenhub.com/p1/${repoPath}/dependencies`,
       authHeader,
@@ -130,9 +141,25 @@ const getAllDependencies = async () => {
         res.on('data', (chunk) => { rawData += chunk })
         res.on('end', () => {
           try {
-            const dependencies = JSON.parse(rawData).dependencies.map(
-              d => [d.blocking.issue_number, d.blocked.issue_number]
-            )
+            const keyBlockedByValue = {}
+            const keyBlockingValue = {}
+            JSON.parse(rawData).dependencies.forEach(d => {
+              const blocking = d.blocking.issue_number
+              const blocked = d.blocked.issue_number
+              if (!keyBlockedByValue[blocked]) {
+                keyBlockedByValue[blocked] = []
+              }
+              keyBlockedByValue[blocked].push(blocking)
+
+              if (!keyBlockingValue[blocking]) {
+                keyBlockingValue[blocking] = []
+              }
+              keyBlockingValue[blocking].push(blocked)
+            })
+            dependencies = {
+              keyBlockedByValue,
+              keyBlockingValue
+            }
             resolve(dependencies)
           } catch (e) {
             reject(e)
@@ -144,30 +171,41 @@ const getAllDependencies = async () => {
   )
 }
 
+// EXTERNAL MODULE: ./node_modules/@actions/github/lib/github.js
+var github = __nccwpck_require__(5016);
+var github_default = /*#__PURE__*/__nccwpck_require__.n(github);
 ;// CONCATENATED MODULE: ./lib/github.js
 
-const github = __nccwpck_require__(5016)
+
+
+
+let issues = null
 
 const getIssues = async () => {
-  const octokit = github.getOctokit(process.env.GITHUB_TOKEN)
+  if (issues) return issues
+  const octokit = github_default().getOctokit(process.env.GITHUB_TOKEN)
   let totalCount = Number.MAX_SAFE_INTEGER
-  let issues = []
+  let issuesArray = []
   let page = 0
   const q = 'repo:Originate/perfected+is:open'
   while (issues.length < totalCount) {
     const result = await octokit.rest.search.issuesAndPullRequests({ q, per_page: 100, page })
-    issues = [...issues, ...result.data.items]
+    issuesArray = [...issuesArray, ...result.data.items]
     totalCount = result.total_count || 0
     page += 1
     if (page > 100 || (((result || {}).data || {}).items || []).length === 0) {
       throw new Error('Bad issue search')
     }
   }
+  issues = (0,lodash.keyBy)(issuesArray, 'number')
   return issues
 }
 
 const getIssueType = issue => {
-  const types = [];
+  const types = []
+  if (issue.pull_request) {
+    types.push('pr')
+  }
   (issue.labels || []).forEach(label => {
     if (['discussion', 'bug', 'task', 'story'].includes(label.name)) {
       types.push(label.name)
@@ -176,8 +214,6 @@ const getIssueType = issue => {
   return types.length === 1 ? types[0] : types.length === 0 ? null : types
 }
 
-// EXTERNAL MODULE: ./node_modules/lodash/lodash.js
-var lodash = __nccwpck_require__(3380);
 ;// CONCATENATED MODULE: ./lib/zenhub-lint.js
 /* eslint-disable camelcase */
 
@@ -186,66 +222,47 @@ var lodash = __nccwpck_require__(3380);
 
 
 
+const laneNames = ['Acceptance', 'Code Review', 'In Progress', 'To Do', 'Backlog', 'New Issues']
 
 const zenhubLint = async () => {
-  const swimlanesArray = await getSwimlanes()
-  console.log('swimlanesArray', swimlanesArray)
-  const swimlanes = (0,lodash.keyBy)(swimlanesArray, 'name')
-  console.log('swimlanes', swimlanes)
-  const issuesResult = await getIssues()
-  console.log('issuesResult', issuesResult)
-  const issues = (0,lodash.keyBy)(issuesResult, 'number')
-
+  const swimlanes = await getSwimlanes()
+  const issues = await getIssues()
   const dependencies = await getAllDependencies()
-  const keyBlockedByValue = {}
-  const keyBlockingValue = {}
-  console.log('h1')
-  dependencies.forEach(([blocking, blocked]) => {
-    if (!keyBlockedByValue[blocked]) {
-      keyBlockedByValue[blocked] = []
-    }
-    keyBlockedByValue[blocked].push(blocking)
 
-    if (!keyBlockingValue[blocking]) {
-      keyBlockingValue[blocking] = []
-    }
-    keyBlockingValue[blocking].push(blocked)
-  })
+  const report = ['Zenhub Lint Report\n']
 
-  console.log('ALL ' + JSON.stringify({
+  try {
+    laneNames.forEach(laneName => {
+      console.log('lanename', laneName)
+      console.log(`swimlanes[${laneName}]`, swimlanes[laneName])
+      const { issues: zenhubIssues } = swimlanes[laneName]
+      zenhubIssues.forEach((zhIssue) => {
+        const { issue_number, is_epic } = zhIssue
+        const issue_key = String(issue_number)
+        if (is_epic) return
+        console.log('issue_key', issue_key)
+        console.log('issues[issue_key]', issues[issue_key])
+        console.log('all keys', Object.keys(issues))
+        const currentIssue = issues[issue_number]
+        const issueType = getIssueType(currentIssue)
+        if (issueType === null) {
+          return report.push(`issue ${issue_key} in ${laneName} doesn't have an issue type.`)
+        }
+        if (Array.isArray(issueType)) {
+          return report.push(`issue ${issue_key} in ${laneName} has multiple issue types.`)
+        }
+        zhIssue.issueType = issueType
+      })
+    })
+  } catch (e) {
+    console.error(e.message)
+  }
+
+  console.log(JSON.stringify({
     issues,
     swimlanes,
     dependencies
   }, null, 2))
-
-  const report = ['Zenhub Lint Report\n']
-
-  console.log('h2c')
-  const laneNames = ['Acceptance', 'Code Review', 'In Progress', 'To Do', 'Backlog', 'New Issues']
-  laneNames.forEach(laneName => {
-    console.log('lanename', laneName)
-    console.log(`swimlanes[${laneName}]`, swimlanes[laneName])
-    const { issues: zenhubIssues } = swimlanes[laneName]
-    console.log('h3')
-    zenhubIssues.forEach((zhIssue) => {
-      const { issue_number, is_epic } = zhIssue
-      const issue_key = String(issue_number)
-      if (is_epic) return
-      console.log('issue_key', issue_key)
-      console.log('issues[issue_key]', issues[issue_key])
-      console.log('all keys', Object.keys(issues))
-      const currentIssue = issues[issue_number]
-      if (currentIssue.pull_request) return // skipping PRs for now.
-      const issueType = getIssueType(currentIssue)
-      if (issueType === null) {
-        return report.push(`issue ${issue_key} in ${laneName} doesn't have an issue type.`)
-      }
-      if (Array.isArray(issueType)) {
-        return report.push(`issue ${issue_key} in ${laneName} has multiple issue types.`)
-      }
-      zhIssue.issueType = issueType
-    })
-  })
 
   return report
 }
