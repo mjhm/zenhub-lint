@@ -153,7 +153,7 @@ const getIssues = async () => {
   let totalCount = Number.MAX_SAFE_INTEGER
   let issues = []
   let page = 0
-  const q = 'repo:Originate/perfected+is:issue+is:open'
+  const q = 'repo:Originate/perfected+is:open'
   while (issues.length < totalCount) {
     const result = await octokit.rest.search.issuesAndPullRequests({ q, per_page: 100, page })
     issues = [...issues, ...result.data.items]
@@ -227,8 +227,8 @@ const zenhubLint = async () => {
     console.log(`swimlanes[${laneName}]`, swimlanes[laneName])
     const { issues: zenhubIssues } = swimlanes[laneName]
     console.log('h3')
-    zenhubIssues.forEach((issue) => {
-      const { issue_number, is_epic } = issue
+    zenhubIssues.forEach((zhIssue) => {
+      const { issue_number, is_epic } = zhIssue
       const issue_key = String(issue_number)
       if (is_epic) return
       console.log('issue_key', issue_key)
@@ -241,7 +241,7 @@ const zenhubLint = async () => {
       if (Array.isArray(issueType)) {
         return report.push(`issue ${issue_key} in ${laneName} has multiple issue types.`)
       }
-      issue.issueType = issueType
+      zhIssue.issueType = issueType
     })
   })
 
