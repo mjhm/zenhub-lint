@@ -171,19 +171,16 @@ const getAllDependencies = async () => {
   )
 }
 
-// EXTERNAL MODULE: ./node_modules/@actions/github/lib/github.js
-var github = __nccwpck_require__(5016);
-var github_default = /*#__PURE__*/__nccwpck_require__.n(github);
 ;// CONCATENATED MODULE: ./lib/github.js
 
 
-
+const github = __nccwpck_require__(5016)
 
 let issues = null
 
 const getIssues = async () => {
   if (issues) return issues
-  const octokit = github_default().getOctokit(process.env.GITHUB_TOKEN)
+  const octokit = github.getOctokit(process.env.GITHUB_TOKEN)
   let totalCount = Number.MAX_SAFE_INTEGER
   let issuesArray = []
   let page = 0
