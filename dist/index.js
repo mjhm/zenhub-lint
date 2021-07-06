@@ -221,6 +221,18 @@ const getIssueType = issue => {
 
 const laneNames = ['Acceptance', 'Code Review', 'In Progress', 'To Do', 'Backlog', 'New Issues']
 
+const checkAll = (swimlanes, report) => {
+  laneNames.forEach(laneName => {
+    const { issues: zenhubIssues } = swimlanes[laneName]
+    zenhubIssues.forEach((zhIssue) => {
+      const { issueType, blockedBy, issue_number } = zhIssue
+      if (issueType === 'story' && (blockedBy || []).length === 0) {
+        return report.push(`story ${issue_number} in ${laneName} doesn't have any blocking tasks.`)
+      }
+    })
+  })
+}
+
 const zenhubLint = async () => {
   const swimlanes = await getSwimlanes()
   const issues = await getIssues()
@@ -235,20 +247,18 @@ const zenhubLint = async () => {
       const { issues: zenhubIssues } = swimlanes[laneName]
       zenhubIssues.forEach((zhIssue) => {
         const { issue_number, is_epic } = zhIssue
-        const issue_key = String(issue_number)
         if (is_epic) return
-        console.log('issue_key', issue_key)
-        console.log('issues[issue_key]', issues[issue_key])
-        console.log('all keys', Object.keys(issues))
         const currentIssue = issues[issue_number]
         const issueType = getIssueType(currentIssue)
         if (issueType === null) {
-          return report.push(`issue ${issue_key} in ${laneName} doesn't have an issue type.`)
+          return report.push(`issue ${issue_number} in ${laneName} doesn't have an issue type.`)
         }
         if (Array.isArray(issueType)) {
-          return report.push(`issue ${issue_key} in ${laneName} has multiple issue types.`)
+          return report.push(`issue ${issue_number} in ${laneName} has multiple issue types.`)
         }
         zhIssue.issueType = issueType
+        zhIssue.blockedBy = dependencies.keyBlockedByValue[issue_number]
+        zhIssue.blocking = dependencies.keyBlockingValue[issue_number]
       })
     })
   } catch (e) {
