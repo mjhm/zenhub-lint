@@ -1,4 +1,4 @@
-const core = require('@actions/core');
+const core = require('@actions/core')
 const { zenhubLint } = require('./lib/zenhub-lint.js')
 
 try {
@@ -12,11 +12,11 @@ try {
   // console.log(`3. The event payload: ${payload}`);
   // console.log('3 sending get request')
   zenhubLint()
-  .then(report => {
-    console.log('report', report)
-  }).catch(error => {
-    core.setFailed(error.message);
-  })
+    .then(report => {
+      console.log('report', report)
+    }).catch(error => {
+      core.setFailed(error.message)
+    })
 } catch (error) {
-  core.setFailed(error.message);
+  core.setFailed(error.message)
 }

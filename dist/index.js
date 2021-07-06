@@ -92,33 +92,30 @@ const authHeader = {
 
 const repoPath = `repositories/${process.env.REPO_ID}`
 
-
-
 const getSwimlanes = async () => {
   return new Promise((resolve, reject) => {
     external_https_default().get(`https://api.zenhub.com/p1/${repoPath}/board`,
       authHeader,
       res => {
         if (res.statusCode !== 200) {
-          return reject(new Error(`Request Failed: ${statusCode}`));
+          return reject(new Error(`Request Failed: ${res.statusCode}`))
         }
-        res.setEncoding('utf8');
-        let rawData = '';
-        res.on('data', (chunk) => { rawData += chunk; });
+        res.setEncoding('utf8')
+        let rawData = ''
+        res.on('data', (chunk) => { rawData += chunk })
         res.on('end', () => {
           try {
-            const parsedData = JSON.parse(rawData);
+            const parsedData = JSON.parse(rawData)
             resolve(parsedData.pipelines)
           } catch (e) {
             reject(e)
           }
-        });
+        })
       }
     )
-    }
+  }
   )
 }
-
 
 const getAllDependencies = async () => {
   return new Promise((resolve, reject) => {
@@ -126,29 +123,30 @@ const getAllDependencies = async () => {
       authHeader,
       res => {
         if (res.statusCode !== 200) {
-          return reject(new Error(`Request Failed: ${statusCode}`));
+          return reject(new Error(`Request Failed: ${res.statusCode}`))
         }
-        res.setEncoding('utf8');
-        let rawData = '';
-        res.on('data', (chunk) => { rawData += chunk; });
+        res.setEncoding('utf8')
+        let rawData = ''
+        res.on('data', (chunk) => { rawData += chunk })
         res.on('end', () => {
           try {
             const dependencies = JSON.parse(rawData).dependencies.map(
-              d => [ d.blocking.issue_number, d.blocked.issue_number]
-            );
+              d => [d.blocking.issue_number, d.blocked.issue_number]
+            )
             resolve(dependencies)
           } catch (e) {
             reject(e)
           }
-        });
+        })
       }
     )
-    }
+  }
   )
 }
+
 ;// CONCATENATED MODULE: ./lib/github.js
 
-const github = __nccwpck_require__(5016);
+const github = __nccwpck_require__(5016)
 
 const getIssues = async () => {
   const octokit = github.getOctokit(process.env.GITHUB_TOKEN)
@@ -157,7 +155,7 @@ const getIssues = async () => {
   let page = 0
   const q = 'repo:Originate/perfected+is:issue+is:open'
   while (issues.length < totalCount) {
-    const result = await octokit.rest.search.issuesAndPullRequests({ q, per_page: 100, page });
+    const result = await octokit.rest.search.issuesAndPullRequests({ q, per_page: 100, page })
     issues = [...issues, ...result.data.items]
     totalCount = result.total_count || 0
     page += 1
@@ -169,8 +167,7 @@ const getIssues = async () => {
 }
 
 const getIssueType = issue => {
-  const types = []
-  console.log('h4')
+  const types = [];
   (issue.labels || []).forEach(label => {
     if (['discussion', 'bug', 'task', 'story'].includes(label.name)) {
       types.push(label.name)
@@ -178,6 +175,7 @@ const getIssueType = issue => {
   })
   return types.length === 1 ? types[0] : types.length === 0 ? null : types
 }
+
 // EXTERNAL MODULE: ./node_modules/lodash/lodash.js
 var lodash = __nccwpck_require__(3380);
 ;// CONCATENATED MODULE: ./lib/zenhub-lint.js
@@ -26794,7 +26792,7 @@ module.exports = require("zlib");;
 var __webpack_exports__ = {};
 // This entry need to be wrapped in an IIFE because it need to be isolated against other modules in the chunk.
 !function() {
-const core = __nccwpck_require__(6024);
+const core = __nccwpck_require__(6024)
 const { zenhubLint } = __nccwpck_require__(2194)
 
 try {
@@ -26808,13 +26806,13 @@ try {
   // console.log(`3. The event payload: ${payload}`);
   // console.log('3 sending get request')
   zenhubLint()
-  .then(report => {
-    console.log('report', report)
-  }).catch(error => {
-    core.setFailed(error.message);
-  })
+    .then(report => {
+      console.log('report', report)
+    }).catch(error => {
+      core.setFailed(error.message)
+    })
 } catch (error) {
-  core.setFailed(error.message);
+  core.setFailed(error.message)
 }
 
 }();
