@@ -236,6 +236,9 @@ const checkAll = async (swimlanes, report) => {
         const hasOpenTasks = blockedBy.some(taskNumber => {
           console.log('taskNumber', taskNumber)
           console.log('issues[taskNumber]', issues[taskNumber])
+          if (!issues[taskNumber]) {
+            console.log('taskNumbers', Object.keys(issues).length, Object.keys(issues))
+          }
           return issues[taskNumber].state === 'open'
         })
         if (laneName === 'Acceptance' && hasOpenTasks) {
@@ -258,7 +261,6 @@ const zenhubLint = async () => {
   try {
     laneNames.forEach(laneName => {
       console.log('zenhubLint laneName', laneName)
-      console.log('zenhubLint swimlane', swimlanes[laneName])
       const { issues: zenhubIssues } = swimlanes[laneName]
       zenhubIssues.forEach((zhIssue) => {
         const { issue_number, is_epic } = zhIssue
@@ -276,7 +278,6 @@ const zenhubLint = async () => {
         zhIssue.blocking = dependencies.keyBlockingValue[issue_number]
         console.log('zhIssue', zhIssue)
       })
-      console.log('zenhubIssues', zenhubIssues)
     })
     await checkAll(swimlanes, report)
   } catch (e) {
