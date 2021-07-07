@@ -191,6 +191,7 @@ const getIssues = async () => {
     }
   }
   console.log('total issue count', issuesArray.length)
+  console.log('all Issues', JSON.stringify(issuesArray.map(i => i.number), null, 2))
   issues = (0,lodash.keyBy)(issuesArray, 'number')
   return issues
 }
