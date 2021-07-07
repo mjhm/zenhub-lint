@@ -179,7 +179,7 @@ const getIssues = async () => {
   if (issues) return issues
   const octokit = github.getOctokit(process.env.GITHUB_TOKEN)
   let issuesArray = []
-  let page = 0
+  let page = 1
   const q = 'repo:Originate/perfected+is:open'
   while (true) {
     const result = await octokit.rest.search.issuesAndPullRequests({ q, per_page: 100, page })
@@ -191,7 +191,7 @@ const getIssues = async () => {
     }
   }
   console.log('total issue count', issuesArray.length)
-  console.log('all Issues', JSON.stringify(issuesArray.map(i => i.number), null, 2))
+  console.log('all Issues', JSON.stringify(issuesArray.map(i => [i.number, i.state]), null, 2))
   issues = (0,lodash.keyBy)(issuesArray, 'number')
   return issues
 }
