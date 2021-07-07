@@ -218,15 +218,27 @@ const getIssueType = issue => {
 
 const laneNames = ['Acceptance', 'Code Review', 'In Progress', 'To Do', 'Backlog', 'New Issues']
 
-const checkAll = (swimlanes, report) => {
+const checkAll = async (swimlanes, report) => {
+  const issues = await getIssues()
   laneNames.forEach(laneName => {
     console.log('checkAll laneName', laneName)
     console.log('checkAll swimlane', swimlanes[laneName])
     const { issues: zenhubIssues } = swimlanes[laneName]
     zenhubIssues.forEach((zhIssue) => {
       const { issueType, blockedBy, issue_number } = zhIssue
-      if (issueType === 'story' && (blockedBy || []).length === 0) {
-        return report.push(`story ${issue_number} in ${laneName} doesn't have any blocking tasks.`)
+      if (issueType === 'story') {
+        if (!['Acceptance', 'In Progress', 'New Issues'].includes(laneName)) {
+          return report.push(`story ${issue_number} can't be in the ${laneName} lane`)
+        }
+        if ((blockedBy || []).length === 0) {
+          return report.push(`story ${issue_number} in ${laneName} doesn't have any blocking tasks.`)
+        }
+        const hasOpenTasks = blockedBy.some(taskNumber => (issues[taskNumber].state === 'open'))
+        if (laneName === 'Acceptance' && hasOpenTasks) {
+          return report.push(`story ${issue_number} in ${laneName} has open blocking task(s).`)
+        } else if (laneName !== 'Acceptance' && hasOpenTasks) {
+          return report.push(`story ${issue_number} in ${laneName} has no blocking task.`)
+        }
       }
     })
   })
@@ -262,7 +274,7 @@ const zenhubLint = async () => {
       })
       console.log('zenhubIssues', zenhubIssues)
     })
-    checkAll(swimlanes, report)
+    await checkAll(swimlanes, report)
   } catch (e) {
     console.error(e.message)
     console.error(e)
