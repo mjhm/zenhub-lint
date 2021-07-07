@@ -190,8 +190,8 @@ const getIssues = async () => {
       throw new Error('More than 100 pages of issues.')
     }
   }
-  console.log('total issue count', issuesArray.length)
-  console.log('all Issues', JSON.stringify(issuesArray.map(i => [i.number, i.state]), null, 2))
+  // console.log('total issue count', issuesArray.length)
+  // console.log('all Issues', JSON.stringify(issuesArray.map(i => [i.number, i.state]), null, 2))
   issues = (0,lodash.keyBy)(issuesArray, 'number')
   return issues
 }
@@ -222,8 +222,8 @@ const laneNames = ['Acceptance', 'Code Review', 'In Progress', 'To Do', 'Backlog
 const checkAll = async (swimlanes, report) => {
   const issues = await getIssues()
   laneNames.forEach(laneName => {
-    console.log('checkAll laneName', laneName)
-    console.log('checkAll swimlane', swimlanes[laneName])
+    // console.log('checkAll laneName', laneName)
+    // console.log('checkAll swimlane', swimlanes[laneName])
     const { issues: zenhubIssues } = swimlanes[laneName]
     zenhubIssues.forEach((zhIssue) => {
       const { issueType, blockedBy, issue_number } = zhIssue
@@ -235,12 +235,12 @@ const checkAll = async (swimlanes, report) => {
           return report.push(`story ${issue_number} in ${laneName} doesn't have any blocking tasks.`)
         }
         const hasOpenTasks = blockedBy.some(taskNumber => {
-          console.log('taskNumber', taskNumber)
-          console.log('issues[taskNumber]', issues[taskNumber])
-          if (!issues[taskNumber]) {
-            console.log('taskNumbers', Object.keys(issues).length, Object.keys(issues))
-          }
-          return issues[taskNumber].state === 'open'
+          // console.log('taskNumber', taskNumber)
+          // console.log('issues[taskNumber]', issues[taskNumber])
+          // if (!issues[taskNumber]) {
+          //   console.log('taskNumbers', Object.keys(issues).length, Object.keys(issues))
+          // }
+          return issues[taskNumber] && issues[taskNumber].state === 'open'
         })
         if (laneName === 'Acceptance' && hasOpenTasks) {
           return report.push(`story ${issue_number} in ${laneName} has open blocking task(s).`)
