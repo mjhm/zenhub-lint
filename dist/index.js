@@ -253,7 +253,7 @@ const checkAll = async (swimlanes, report) => {
         }
         if (laneName === 'Acceptance' && hasOpenTasks) {
           return report.push(`story ${issue_number} in ${laneName} has open blocking task(s).`)
-        } else if (laneName !== 'Acceptance' && hasOpenTasks) {
+        } else if (laneName !== 'Acceptance' && !hasOpenTasks) {
           return report.push(`story ${issue_number} in ${laneName} has no open blocking tasks.`)
         }
       }
