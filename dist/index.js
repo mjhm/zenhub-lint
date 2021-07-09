@@ -216,6 +216,7 @@ const getIssueType = issue => {
 // import github from '@actions/github'
 
 
+// import {  } from 'lodash'
 
 const laneNames = ['Acceptance', 'Code Review', 'In Progress', 'To Do', 'Backlog', 'New Issues']
 
@@ -227,6 +228,10 @@ const checkAll = async (swimlanes, report) => {
     const { issues: zenhubIssues } = swimlanes[laneName]
     zenhubIssues.forEach((zhIssue) => {
       const { issueType, blockedBy, issue_number } = zhIssue
+      if (issue_number.toString() === '365') {
+        console.log('issue365', zhIssue)
+      }
+
       if (issueType === 'story') {
         if (!['Acceptance', 'In Progress', 'New Issues'].includes(laneName)) {
           return report.push(`story ${issue_number} can't be in the ${laneName} lane`)
@@ -242,10 +247,14 @@ const checkAll = async (swimlanes, report) => {
           // }
           return issues[taskNumber] && issues[taskNumber].state === 'open'
         })
+        if (issue_number === 365) {
+          console.log('issue365 hasOpenTasks', hasOpenTasks)
+          console.log('issues365 blockedBy', blockedBy)
+        }
         if (laneName === 'Acceptance' && hasOpenTasks) {
           return report.push(`story ${issue_number} in ${laneName} has open blocking task(s).`)
         } else if (laneName !== 'Acceptance' && hasOpenTasks) {
-          return report.push(`story ${issue_number} in ${laneName} has no blocking task.`)
+          return report.push(`story ${issue_number} in ${laneName} has no open blocking tasks.`)
         }
       }
     })
