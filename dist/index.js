@@ -241,6 +241,7 @@ const checkAll = async (swimlanes, report) => {
         if ((blockedBy || []).length === 0) {
           return report.push(`story ${issue_number} in ${laneName} doesn't have any blocking tasks.`)
         }
+        console.error('H3')
         const hasOpenTasks = blockedBy.some(taskNumber => {
           // console.log('taskNumber', taskNumber)
           // console.log('issues[taskNumber]', issues[taskNumber])
@@ -258,6 +259,7 @@ const checkAll = async (swimlanes, report) => {
             return report.push(`story ${issue_number} in ${laneName} has no open blocking tasks.`)
           }
         }
+        console.error('H2')
         const hasActiveTasks = blockedBy.some(taskNumber => {
           return !issues[taskNumber] || ['Code Review', 'In Progress', 'To Do'].includes(issues[taskNumber].laneName)
         })
@@ -283,6 +285,7 @@ const checkAll = async (swimlanes, report) => {
           }
         }
       }
+      console.error('H1')
       if (['Acceptance', 'QA', 'Code Review', 'In Progress'].includes(laneName)) {
         console.error('***assignees', assignees)
         if (!assignees.some(assignee => developers.includes[assignee])) {
