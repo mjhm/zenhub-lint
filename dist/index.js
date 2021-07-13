@@ -284,6 +284,7 @@ const checkAll = async (swimlanes, report) => {
         }
       }
       if (['Acceptance', 'QA', 'Code Review', 'In Progress'].includes(laneName)) {
+        console.log('assignees', assignees)
         if (!assignees.some(assignee => developers.includes[assignee])) {
           return report.push(`${issueType} ${issue_number} in ${laneName} doesn't have an assigned developer`)
         }
