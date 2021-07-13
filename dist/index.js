@@ -289,6 +289,9 @@ const zenhubLint = async () => {
   try {
     laneNames.forEach(laneName => {
       console.log('zenhubLint laneName', laneName)
+      if (!swimlanes[laneName]) {
+        return report.push(`Swimlane ${laneName} doesn't exist.`)
+      }
       const { issues: zenhubIssues } = swimlanes[laneName]
       zenhubIssues.forEach((zhIssue) => {
         const { issue_number, is_epic } = zhIssue
