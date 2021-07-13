@@ -219,6 +219,7 @@ const getIssueType = issue => {
 // import {  } from 'lodash'
 
 const laneNames = ['Acceptance', 'QA', 'Code Review', 'In Progress', 'To Do', 'Backlog', 'New Issues']
+const developers = ['andrevitalb', 'hallettj', 'JoelAtDeluxe', 'mjhm', 'ramilrlm', 'snailin90', 'vinilana']
 
 const checkAll = async (swimlanes, report) => {
   const issues = await getIssues()
@@ -228,7 +229,7 @@ const checkAll = async (swimlanes, report) => {
     // console.log('checkAll swimlane', swimlanes[laneName])
     const { issues: zenhubIssues } = swimlanes[laneName]
     zenhubIssues.forEach((zhIssue) => {
-      const { issueType, blockedBy, issue_number, estimate } = zhIssue
+      const { issueType, blockedBy, issue_number, estimate, assignees } = zhIssue
       if (issue_number.toString() === '365') {
         console.log('issue365', zhIssue)
       }
@@ -282,6 +283,11 @@ const checkAll = async (swimlanes, report) => {
           }
         }
       }
+      if (['Acceptance', 'QA', 'Code Review', 'In Progress'].includes(laneName)) {
+        if (!assignees.some(assignee => developers.includes[assignee])) {
+          return report.push(`${issueType} ${issue_number} in ${laneName} doesn't have an assigned developer`)
+        }
+      }
     })
   })
 }
@@ -316,6 +322,7 @@ const zenhubLint = async () => {
         zhIssue.issueType = issueType
         zhIssue.blockedBy = dependencies.keyBlockedByValue[issue_number]
         zhIssue.blocking = dependencies.keyBlockingValue[issue_number]
+        zhIssue.assignees = (currentIssue.assignees || []).map(assignee => assignee.login)
         console.log('zhIssue', zhIssue)
       })
     })
