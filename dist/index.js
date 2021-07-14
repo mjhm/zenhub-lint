@@ -229,7 +229,7 @@ const checkAll = async (swimlanes, report) => {
     // console.log('checkAll swimlane', swimlanes[laneName])
     const { issues: zenhubIssues } = swimlanes[laneName]
     zenhubIssues.forEach((zhIssue) => {
-      const { issueType, blockedBy, issue_number, estimate, assignees } = zhIssue
+      const { issueType, blockedBy, blocking, issue_number, estimate, assignees } = zhIssue
       if (issue_number.toString() === '365') {
         console.log('issue365', zhIssue)
       }
@@ -268,6 +268,9 @@ const checkAll = async (swimlanes, report) => {
       if (issueType === 'task') {
         if (['Acceptance', 'QA'].includes(laneName)) {
           return report.push(`task ${issue_number} can't be in the ${laneName} lane`)
+        }
+        if (!blocking || blocking.length === 0) {
+          return report.push(`task ${issue_number} in ${laneName} isn't blocking anything.`)
         }
       }
 
