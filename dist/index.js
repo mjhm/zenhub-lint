@@ -288,7 +288,7 @@ const checkAll = async (swimlanes, report) => {
           console.log('***814 assignees', assignees)
           console.log('***814 developers', developers)
         }
-        if (!(assignees || []).some(assignee => developers.includes([assignee]))) {
+        if (!(assignees || []).some(assignee => developers.includes(assignee))) {
           return report.push(`${issueType} ${issue_number} in ${laneName} doesn't have an assigned developer`)
         }
       }
