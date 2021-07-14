@@ -219,7 +219,7 @@ const getIssueType = issue => {
 // import {  } from 'lodash'
 
 const laneNames = ['Acceptance', 'QA', 'Code Review', 'In Progress', 'To Do', 'Backlog', 'New Issues']
-const developers = ['andrevitalb', 'hallettj', 'JoelAtDeluxe', 'mjhm', 'ramilrlm', 'snailin90', 'vinilana']
+const developers = ['andrevitalb', 'hallettj', 'JoelAtDeluxe', 'mjhm', 'ramirlm', 'snailin90', 'vinilana']
 
 const checkAll = async (swimlanes, report) => {
   const issues = await getIssues()
@@ -283,11 +283,7 @@ const checkAll = async (swimlanes, report) => {
           }
         }
       }
-      if (['Acceptance', 'QA', 'Code Review'].includes(laneName)) {
-        if (issue_number.toString() === "814") {
-          console.log('***814 assignees', assignees)
-          console.log('***814 developers', developers)
-        }
+      if (['Acceptance', 'QA', 'Code Review'].includes(laneName) && issueType !== 'pr') {
         if (!(assignees || []).some(assignee => developers.includes(assignee))) {
           return report.push(`${issueType} ${issue_number} in ${laneName} doesn't have an assigned developer`)
         }
