@@ -202,10 +202,11 @@ const getIssueType = issue => {
     types.push('pr')
   }
   (issue.labels || []).forEach(label => {
-    if (['discussion', 'bug', 'task', 'story'].includes(label.name)) {
+    if (['discussion', 'bug', 'story', 'task'].includes(label.name)) {
       types.push(label.name)
     }
   })
+  if (types.join['-'] === 'story-task') return 'story-task'
   return types.length === 1 ? types[0] : types.length === 0 ? null : types
 }
 
@@ -219,7 +220,7 @@ const getIssueType = issue => {
 // import {  } from 'lodash'
 
 const laneNames = ['Acceptance', 'QA', 'Code Review', 'In Progress', 'To Do', 'Backlog', 'New Issues']
-const developers = ['andrevitalb', 'hallettj', 'JoelAtDeluxe', 'mjhm', 'ramirlm', 'snailin90', 'vinilana']
+const developers = ['andrevitalb', 'brunocerk', 'hallettj', 'JoelAtDeluxe', 'mjhm', 'ramirlm', 'snailin90', 'vinilana']
 
 const checkAll = async (swimlanes, report) => {
   const issues = await getIssues()
@@ -230,9 +231,6 @@ const checkAll = async (swimlanes, report) => {
     const { issues: zenhubIssues } = swimlanes[laneName]
     zenhubIssues.forEach((zhIssue) => {
       const { issueType, blockedBy, blocking, issue_number, estimate, assignees } = zhIssue
-      if (issue_number.toString() === '365') {
-        console.log('issue365', zhIssue)
-      }
 
       if (issueType === 'story') {
         if (!['Acceptance', 'QA', 'In Progress', 'New Issues'].includes(laneName)) {
@@ -274,7 +272,7 @@ const checkAll = async (swimlanes, report) => {
         }
       }
 
-      if (issueType === 'bug' || issueType === 'task') {
+      if (issueType === 'bug' || issueType === 'task' || issueType === 'story-task') {
         if (['Acceptance', 'QA', 'Code Review', 'In Progress', 'To Do', 'Backlog'].includes(laneName)) {
           if (!estimate) {
             return report.push(`${issueType} ${issue_number} in ${laneName} is not pointed.`)
