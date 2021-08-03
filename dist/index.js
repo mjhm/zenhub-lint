@@ -206,6 +206,7 @@ const getIssueType = issue => {
       types.push(label.name)
     }
   })
+  types.sort()
   if (types.join['-'] === 'story-task') return 'story-task'
   return types.length === 1 ? types[0] : types.length === 0 ? null : types
 }
