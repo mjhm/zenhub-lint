@@ -207,8 +207,7 @@ const getIssueType = issue => {
     }
   })
   types.sort()
-  if (types.join['-'] === 'story-task') return 'story-task'
-  return types.length === 1 ? types[0] : types.length === 0 ? null : types
+  return types.join['-']
 }
 
 ;// CONCATENATED MODULE: ./lib/zenhub-lint.js
@@ -316,8 +315,8 @@ const zenhubLint = async () => {
         if (issueType === null) {
           return report.push(`issue ${issue_number} in ${laneName} doesn't have an issue type.`)
         }
-        if (Array.isArray(issueType)) {
-          return report.push(`issue ${issue_number} in ${laneName} has multiple issue types.`)
+        if (!['bug', 'discussion', 'story', 'story-task', 'task'].includes(issueType)) {
+          return report.push(`issue ${issue_number} in ${laneName} has invalid issue type ${issueType}.`)
         }
         // Enhance issue representations
         currentIssue.laneName = laneName // So that we can easily check this for blocking issues.
