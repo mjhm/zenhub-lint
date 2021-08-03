@@ -315,7 +315,7 @@ const zenhubLint = async () => {
         if (issueType === null) {
           return report.push(`issue ${issue_number} in ${laneName} doesn't have an issue type.`)
         }
-        if (!['bug', 'discussion', 'story', 'story-task', 'task'].includes(issueType)) {
+        if (!['bug', 'discussion', 'pr', 'story', 'story-task', 'task'].includes(issueType)) {
           return report.push(`issue ${issue_number} in ${laneName} has invalid issue type ${issueType}.`)
         }
         // Enhance issue representations
