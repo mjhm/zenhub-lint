@@ -207,7 +207,7 @@ const getIssueType = issue => {
     }
   })
   types.sort()
-  return types.join['-']
+  return types.join('-')
 }
 
 ;// CONCATENATED MODULE: ./lib/zenhub-lint.js
